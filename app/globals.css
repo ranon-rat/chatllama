@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+#title{
+  text-align: center;
+}

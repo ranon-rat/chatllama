@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <h1 align="center" className='text-9xl'>chatLLama2</h1>
+        <h1 id="title" className='text-9xl'>chatLLama2</h1>
         {children}
         </body>
     </html>
