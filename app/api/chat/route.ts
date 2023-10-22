@@ -1,9 +1,8 @@
-import { messagesStr,bodyImportant } from "@/app/type"
+import { messagesStr, bodyImportant } from "@/app/type"
 import { NextResponse, NextRequest } from "next/server"
 
-
 export async function POST(req: NextRequest) {
-  let body: bodyImportant=await req.json()
+  let body: bodyImportant = await req.json()
 
   if (process.env.OPENAI_API_KEY) {
     let res: Response = await fetch("https://api.fireworks.ai/inference/v1/chat/completions", {
@@ -11,7 +10,7 @@ export async function POST(req: NextRequest) {
       headers: {
 
         accept: "application/json",
-        "authorization": "Bearer "+process.env.OPENAI_API_KEY,
+        "authorization": "Bearer " + process.env.OPENAI_API_KEY,
         "content-type": "application/json"
       },
       body: JSON.stringify({
@@ -22,12 +21,12 @@ export async function POST(req: NextRequest) {
         "n": 1,
         "stream": false,
         "max_tokens": 200,
-        "model": body.model|| "accounts/fireworks/models/llama-v2-70b-chat"
+        "model": body.model || "accounts/fireworks/models/llama-v2-70b-chat"
 
       })
 
     })
-    return NextResponse.json( ((await res.json()) as any)?.choices[0]?.message as messagesStr)
+    return NextResponse.json(((await res.json()) as any)?.choices[0]?.message as messagesStr)
   }
 
   return NextResponse.json({ content: "system error", role: "system" })
