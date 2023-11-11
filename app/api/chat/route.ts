@@ -6,7 +6,10 @@ import { experimental_buildOpenAssistantPrompt } from 'ai/prompts';
 // Create a new HuggingFace Inference instance
 
 const Hf = new HfInferenceEndpoint(process.env.ENDPOINT!,process.env.TOKEN);
+const sysPrompt=process.env.SYSTEM_PROMPT
+function toFormat(msgs:[messagesStr]){
 
+}
 export async function POST(req: NextRequest) {
   let body: bodyImportant = await req.json()
   const response = Hf.textGeneration({

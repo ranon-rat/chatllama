@@ -56,14 +56,12 @@ export default function Home() {
   function onSubmit(e: FormEvent, messages: messagesStr[]) {
     e.preventDefault();
 
-    const model = document.getElementById("model") as HTMLInputElement;
 
     const chatTextarea = document.getElementById(
       "chat-textarea"
     ) as HTMLInputElement;
     const chatUserMessage = chatTextarea?.value;
 
-    const modelType = model?.value;
 
     if (!chatUserMessage) return;
 
@@ -78,7 +76,6 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: modelType,
         msgs: messages,
         chat: chatUserMessage,
       }),
@@ -124,28 +121,7 @@ export default function Home() {
   return (
     <div className="lg:overflow-hidden">
       <div className="flex flex-col lg:flex-row gap-4 p-4 h-screen">
-        <div className="flex flex-col lg:w-1/4 border border-gray-300 bg-white p-2">
-          <h2 className="font-semibold">Configuration</h2>
-          <hr className="w-full border-gray-200 my-4" />
-
-          <form>
-            <div className="">
-              <label
-                htmlFor="model"
-                className="font-semibold text-sm font-medium"
-              >
-                Model
-              </label>
-              <input
-                type="url"
-                id="model"
-                className="border border-gray-300 rounded-lg text-xs lg:text-sm w-full py-2.5"
-                placeholder="/accounts/fireworks/models/llama-v2-70b-chat"
-                required
-              />
-            </div>
-          </form>
-        </div>
+     
 
         <div className="flex flex-col lg:w-3/4 mt-auto overflow-hidden lg:mt-0">
           <div
