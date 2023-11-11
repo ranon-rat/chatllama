@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ content: (await response as any).generated_text, role: "assistant" })
+  return NextResponse.json({ content: (await response as any).generated_text.replace(/\<[\d\D]+\>/g,""), role: "assistant" })
 
 
 }
