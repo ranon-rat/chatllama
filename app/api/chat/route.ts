@@ -6,6 +6,7 @@ import { experimental_buildOpenAssistantPrompt } from 'ai/prompts';
 // Create a new HuggingFace Inference instance
 
 const Hf = new HfInferenceEndpoint(process.env.ENDPOINT!,process.env.TOKEN);
+
 export async function POST(req: NextRequest) {
   let body: bodyImportant = await req.json()
   const response = Hf.textGeneration({
@@ -22,9 +23,9 @@ export async function POST(req: NextRequest) {
       truncate: 1000,
       return_full_text: false,
     },
-  });
+  }).catch(e=>console.log(process.env.ENDPOINT,process.env.TOKEN));
 
-  return NextResponse.json({ content: (await response as any).generated_text.replace(/\<[\d\D]+\>/g,""), role: "assistant" })
+  return NextResponse.json({ content: (await response as any)?.generated_text?.replace(/\<[\d\D]+\>/g,""), role: "assistant" })
 
 
 }
