@@ -12,7 +12,7 @@ const Hf = new HfInference(process.env.TOKEN,{
 });
 export async function POST(req: NextRequest) {
   let body: bodyImportant = await req.json()
-  if (process.env.OPENAI_API_KEY) {
+  if (process.env.TOKEN) {
     const response = Hf.textGeneration({
       
       model: "",
