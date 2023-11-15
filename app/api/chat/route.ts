@@ -26,14 +26,15 @@ export async function POST(req: NextRequest) {
       max_new_tokens: 200,
       // @ts-ignore (this is a valid parameter specifically in OpenAssistant models)
       typical_p: 0.2,
+      top_p:0.9,
       repetition_penalty: 1,
       truncate: 1000,
       top_k:50,
       return_full_text: false,
     },
-  }).catch(e => console.log(process.env.ENDPOINT, process.env.TOKEN));
+  }).catch(e => console.log(e));
 
-  return NextResponse.json({ content: (await response as any)?.generated_text?.replace(/\<[\d\D]+\>/g, ""), role: "assistant" })
+  return NextResponse.json({ content: (await response as any)?.generated_text?.replace(/\<[\d\D]+\>/g, "").replaceAll("\n\n",""), role: "assistant" })
 
 
 }
