@@ -35,7 +35,7 @@ async function tts(input:string) {
 
 export async function POST(req: NextRequest) {
   let msg:  bodyImportant = await req.json()
-  console.log(msg)
+  msg.msgs=msg.msgs.slice(0,Math.min(15,msg.msgs.length))
   if (process.env.OPENAI_API_KEY) {
     let res: Response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         "model": "gpt-4",
         "messages": msg.msgs,
-        "temperature": 1,
+        "temperature": 0.7,
         "top_p": 1,
         "n": 1,
         "stream": false,
@@ -55,8 +55,9 @@ export async function POST(req: NextRequest) {
       })
     })
     let m=((await res.json()) as any).choices[0].message as messagesStr
+    console.log(m)
     return NextResponse.json({msg:m, audio:await tts(m.content)} as audioMsg)
   }
 
-  return NextResponse.json({msg:{ content: "system error", role: "system" }} as audioMsg)
+  return NextResponse.json({msg:{ content: "system error", role: "assistant" }} as audioMsg)
 }
