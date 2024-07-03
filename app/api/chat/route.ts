@@ -1,40 +1,62 @@
-import { messagesStr, bodyImportant } from "@/app/type"
-import { NextResponse, NextRequest } from "next/server"
-import { HfInferenceEndpoint } from '@huggingface/inference';
+import { messagesStr, bodyImportant,audioMsg } from "@/app/type";
+import { NextResponse, NextRequest } from "next/server";
 
-// Create a new HuggingFace Inference instance
-
-const Hf = new HfInferenceEndpoint(process.env.ENDPOINT!, process.env.TOKEN);
-const systemPrompt = process.env.SYSTEM_PROMPT
-function toFormat(msgs: messagesStr[]) {
-  return msgs.reduce(
-    (text, msg) => text + `<|${msg.role}|>\n${msg.content}\n</s>\n`
-    , `<|system|>\n${systemPrompt}\n</s>\n`)
-    + `<|assistant|>\n`;
+async function toBase64(arrayBuffer: ArrayBuffer) {
+  let uint8Array = new Uint8Array(arrayBuffer);
+  return Buffer.from(uint8Array).toString('base64');
 }
+async function tts(input:string) {
+  try {
+      const response = await fetch("https://api.openai.com/v1/audio/speech", {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${ process.env.OPENAI_API_KEY}`,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              model: "tts-1",
+              input: input,
+              voice: "alloy"
+          })
+      });
+
+      if (!response.ok) {
+          return ""
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const base64String = await toBase64(arrayBuffer);
+      return "data:audio/mp3;base64,"+base64String
+  } catch (error) {
+      console.error('Error:', error);
+      return ""
+  }
+}
+
 export async function POST(req: NextRequest) {
-  let body: bodyImportant = await req.json()
-  console.log(toFormat(body.msgs.slice(-11)))
+  let msg:  bodyImportant = await req.json()
+  console.log(msg)
+  if (process.env.OPENAI_API_KEY) {
+    let res: Response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "authorization": "Bearer " + process.env.OPENAI_API_KEY,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        "model": "gpt-4",
+        "messages": msg.msgs,
+        "temperature": 1,
+        "top_p": 1,
+        "n": 1,
+        "stream": false,
+        "max_tokens": 200
+      })
+    })
+    let m=((await res.json()) as any).choices[0].message as messagesStr
+    return NextResponse.json({msg:m, audio:await tts(m.content)} as audioMsg)
+  }
 
-  const response = Hf.textGeneration({
-    model: "",
-    // @ts-ignore (this is a valid parameter specifically in OpenAssistant models)
-
-    inputs: toFormat(body.msgs.slice(-11)),
-    parameters: {
-      temperature: 0.5,
-      max_new_tokens: 200,
-      // @ts-ignore (this is a valid parameter specifically in OpenAssistant models)
-      typical_p: 0.2,
-      top_p:0.9,
-      repetition_penalty: 1,
-      truncate: 1000,
-      top_k:50,
-      return_full_text: false,
-    },
-  }).catch(e => console.log(e));
-
-  return NextResponse.json({ content: (await response as any)?.generated_text?.replace(/\<[\d\D]+\>/g, "").replaceAll("\n\n",""), role: "assistant" })
-
-
+  return NextResponse.json({msg:{ content: "system error", role: "system" }} as audioMsg)
 }

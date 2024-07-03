@@ -1,10 +1,11 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
-import { messagesStr } from "./type";
+import { messagesStr ,audioMsg} from "./type";
 
 export default function Home() {
   // i need to get, the messages, input and
   const [messages, setMessages] = useState<messagesStr[]>([]);
+  const [audioList,setAudio]=useState<string[]>([])
 
   function onEnterPress(e: any) {
     if (e.keyCode == 13 && e.shiftKey == false) {
@@ -61,7 +62,7 @@ export default function Home() {
       "chat-textarea"
     ) as HTMLInputElement;
     const chatUserMessage = chatTextarea?.value;
-
+    let audioSource=""
 
     if (!chatUserMessage) return;
 
@@ -86,8 +87,10 @@ export default function Home() {
         console.log(response);
         return response.json();
       })
-      .then((response) => {
-        messages.push(response);
+      .then((response:audioMsg) => {
+        messages.push(response.msg);
+        audioList.push(response.audio)
+        console.log(audioList)
         setMessages([...messages]);
       })
       .catch((error) => {
@@ -117,7 +120,7 @@ export default function Home() {
       chatTextarea.scrollIntoView({ behavior: "smooth" })
     }
   }, [messages]);
-
+  
   return (
     <div className="lg:overflow-hidden">
       <div className="flex flex-col lg:flex-row gap-4 p-4 h-screen">
@@ -137,6 +140,7 @@ export default function Home() {
                   {msg.role}
                 </span>
                 <p>{msg.content}</p>
+                {msg.role=="assistant"?<audio src={audioList[(index+1)/2-1]} controls></audio>:<div></div>}
               </div>
             ))}
           </div>
