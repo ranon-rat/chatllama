@@ -7,17 +7,16 @@ async function toBase64(arrayBuffer: ArrayBuffer) {
 }
 async function tts(input:string) {
   try {
-      const response = await fetch("https://api.openai.com/v1/audio/speech", {
+      const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech", {
           method: 'POST',
           headers: {
-              'Authorization': `Bearer ${ process.env.OPENAI_API_KEY}`,
+              'Authorization': `Bearer ${ process.env.ELEVEN_LABS_KEY}`,
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-              model: "tts-1",
-              input: input,
-              voice: "alloy"
-          })
+            text: input,
+            voice: 'your_voice_choice' // Reemplaza esto con la voz que deseas usar
+        })
       });
 
       if (!response.ok) {
