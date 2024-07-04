@@ -17,7 +17,7 @@ async function tts(input:string) {
 
               model: "tts-1",
               input: input,
-              voice: "alloy"
+              voice: "onyx"
           })
       });
 
