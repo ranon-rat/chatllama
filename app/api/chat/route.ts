@@ -15,7 +15,7 @@ async function tts(input:string) {
           },
           body: JSON.stringify({
             text: input,
-            voice: 'your_voice_choice' // Reemplaza esto con la voz que deseas usar
+            voice: 'Brian' // Reemplaza esto con la voz que deseas usar
         })
       });
 
