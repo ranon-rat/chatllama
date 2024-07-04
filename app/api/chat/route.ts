@@ -7,30 +7,23 @@ async function toBase64(arrayBuffer: ArrayBuffer) {
 }
 async function tts(input:string) {
   try {
-      const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/6xftrpatV0jGmFHxDjUv", {
+      const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech", {
           method: 'POST',
           headers: {
-              'xi-api-key': process.env.ELEVEN_LABS_KEY,
+              'Authorization': `Bearer ${ process.env.ELEVEN_LABS_KEY}`,
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             text: input,
-            "voice_settings": {
-              "stability": 0.7,
-              "similarity_boost": 0.7,
-              "style": 0.4,
-              "use_speaker_boost": true
-            },        })
+            voice: 'Brian' // Reemplaza esto con la voz que deseas usar
+        })
       });
 
       if (!response.ok) {
-        console.log(await response.json())
-        console.log(response.status)
           return ""
       }
 
       const arrayBuffer = await response.arrayBuffer();
-
       const base64String = await toBase64(arrayBuffer);
       return "data:audio/mp3;base64,"+base64String
   } catch (error) {
