@@ -140,7 +140,7 @@ export default function Home() {
                   {msg.role}
                 </span>
                 <p>{msg.content}</p>
-                {msg.role=="assistant"?<audio src={audioList[(index+1)/2-1]} controls></audio>:<div></div>}
+                {msg.role=="assistant"?<audio  autoPlay src={audioList[(index+1)/2-1]} controls></audio>:<div></div>}
               </div>
             ))}
           </div>
