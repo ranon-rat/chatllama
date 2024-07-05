@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        "model": "gpt-4",
+        "model": "ft:gpt-3.5-turbo-1106:personal::8I5MOTvH",
         "messages": msg.msgs,
         "temperature": 0.7,
         "top_p": 1,
