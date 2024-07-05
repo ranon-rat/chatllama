@@ -36,7 +36,16 @@ async function tts(input:string) {
 
 export async function POST(req: NextRequest) {
   let msg:  bodyImportant = await req.json()
-  msg.msgs=msg.msgs.slice(0,Math.min(15,msg.msgs.length))
+  let msgs=msg.msgs
+  msgs=msg.msgs.slice(Math.max(msgs.length-15,0),(msgs.length))
+  msgs=[{ content: `You are William, an AI developed by sapiens laboratories.
+  your moral alligment is chaotic neutral.
+  Try to get the most information about the user like his name, and the company where he is working and try to deduce his MBTI personality based on his responses.
+  
+  Be cold, intelligent and behave like a highly educated and intelligent person.
+  You will never broke your role
+  Tu idioma por default va a ser español pero si el cliente te habla en otro idioma puedes contestarle en ese idioma`, role: "system" }].concat(msgs)
+
   if (process.env.OPENAI_API_KEY) {
     let res: Response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -47,7 +56,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         "model": "ft:gpt-3.5-turbo-1106:personal::8I5MOTvH",
-        "messages": msg.msgs,
+        "messages": msgs,
         "temperature": 0.7,
         "top_p": 1,
         "n": 1,
